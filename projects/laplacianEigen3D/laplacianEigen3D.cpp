@@ -1,19 +1,19 @@
 /*
  This file is part of SSFR (Zephyr).
- 
+
  Zephyr is free software: you can redistribute it and/or modify
  it under the terms of the GNU General Public License as published by
  the Free Software Foundation, either version 3 of the License, or
  (at your option) any later version.
- 
+
  Zephyr is distributed in the hope that it will be useful,
  but WITHOUT ANY WARRANTY; without even the implied warranty of
  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  GNU General Public License for more details.
- 
+
  You should have received a copy of the GNU General Public License
  along with Zephyr.  If not, see <http://www.gnu.org/licenses/>.
- 
+
  Copyright 2013 Theodore Kim
  */
 #include "EIGEN.h"
@@ -128,8 +128,8 @@ enum RECONSTRUCTION_METHOD { FFT_RECON, MATRIX_VECTOR_RECON, ANALYTIC_RECON };
 RECONSTRUCTION_METHOD reconstructionMethod = FFT_RECON;
 
 QUICKTIME_MOVIE movie;
-//bool captureMovie = true;
-bool captureMovie = false;
+bool captureMovie = true;
+// bool captureMovie = false;
 
 typedef SparseMatrix<Real> EIGEN_SPARSE;
 vector<EIGEN_SPARSE> eigenTensor;
@@ -142,7 +142,7 @@ void generateTriples(const int N, vector<VEC3I>& triples)
   TIMER functionTimer(__FUNCTION__);
   VEC3I currentTriple(0, 0, 0);
   // First, put in all the ones that have exactly one N
-  for (int i = 1; i <= N - 1; i++) 
+  for (int i = 1; i <= N - 1; i++)
   {
     currentTriple[0] = N;
     currentTriple[1] = i;
@@ -170,7 +170,7 @@ void generateTriples(const int N, vector<VEC3I>& triples)
   currentTriple[1] = 0;
   currentTriple[2] = N;
   triples.push_back(currentTriple);
-  
+
   currentTriple[0] = 0;
   currentTriple[1] = N;
   currentTriple[2] = N;
@@ -185,9 +185,9 @@ void generateAllTriples(const int N, vector<VEC3I>& triples)
   TIMER functionTimer(__FUNCTION__);
   // Since each triple (a, b, c) that worked for N = k also works for N = k + 1,
   // we can just iterate through them one by one and keep pushing back the new values.
-  for (int k = 0; k <= N; k++) 
+  for (int k = 0; k <= N; k++)
   {
-    if (k == 0) 
+    if (k == 0)
     {
       // Base case: only the triple (0, 0, 0) works
       VEC3I zero(0, 0, 0);
@@ -209,7 +209,7 @@ void generateAllQuads(const vector<VEC3I>& triples, vector<vector<int> >& quads)
     const VEC3I& triple = triples[x];
 
     vector<int> quad(4);
-    quad[0] = 0; 
+    quad[0] = 0;
     quad[1] = triple[0];
     quad[2] = triple[1];
     quad[3] = triple[2];
@@ -239,11 +239,11 @@ void reconstructSparseFFT()
   // build a frequency-domain x velocity
   for (int i = 0; i < w.size(); i++)
     xHat[xDeltaIndices[i]] += xMagnitudes[i] * w[i];
-  
+
   // build a frequency-domain y velocity
   for (int i = 0; i < w.size(); i++)
     yHat[yDeltaIndices[i]] += yMagnitudes[i] * w[i];
- 
+
   // build a frequency-domain z velocity
   for (int i = 0; i < w.size(); i++)
     zHat[zDeltaIndices[i]] += zMagnitudes[i] * w[i];
@@ -274,7 +274,7 @@ void stepEigenfunctionsExp()
 
   MATRIX threeFull = three.full();
   w = threeFull.exp() * w;
-  
+
   //w += dt * wDot;
   //Real e2 = w.dot(w);
   //if (e2 > 0)
@@ -329,7 +329,7 @@ void stepEigenfunctionsEigen()
     //wDot[k] = w.dot(slab * w);
 
     VectorXd product = slab * wEigen;
-    
+
     wDot[k] = 0;
     for (int x = 0; x < basisRank; x++)
       wDot[k] += w[x] * product[x];
@@ -458,7 +458,7 @@ void buildTableIXYZ(int dim)
         {
           Real eigenvalue = x * x + y * y + z * z;
 
-          int ks[] = {x,y,z}; 
+          int ks[] = {x,y,z};
           int k1Zero = (x == 0);
           int k2Zero = (y == 0);
           int k3Zero = (z == 0);
@@ -575,7 +575,7 @@ void buildVelocityBasis(const string& filename)
 
     //cout << " (" << i << ", " << k1 << "," << k2 << "," << k3 << ")" << flush;
     //cout << " Column " << x << " norm: " << column.norm2() << endl;
-    
+
     int k1Zero = k1 == 0;
     int k2Zero = k2 == 0;
     int k3Zero = k3 == 0;
@@ -714,11 +714,11 @@ bool structureCoefficientAnalytic(const vector<int>& a123, const vector<int>& b1
   const int a1 = a123[1];
   const int a2 = a123[2];
   const int a3 = a123[3];
-  
+
   const int b1 = b123[1];
   const int b2 = b123[2];
   const int b3 = b123[3];
-  
+
   const int k1 = k123[1];
   const int k2 = k123[2];
   const int k3 = k123[3];
@@ -729,13 +729,13 @@ bool structureCoefficientAnalytic(const vector<int>& a123, const vector<int>& b1
   const bool c101_1 = c101(a1,b1,k1);
   const bool or_1 = c100_1 || c110_1 || c101_1;
   if (!or_1) return false;
-  
+
   const bool c100_2 = c100(a2,b2,k2);
   const bool c110_2 = c110(a2,b2,k2);
   const bool c101_2 = c101(a2,b2,k2);
   const bool or_2 = c100_2 || c110_2 || c101_2;
   if (!or_2) return false;
-  
+
   const bool c100_3 = c100(a3,b3,k3);
   const bool c110_3 = c110(a3,b3,k3);
   const bool c101_3 = c101(a3,b3,k3);
@@ -751,25 +751,25 @@ bool structureCoefficientAnalytic(const vector<int>& a123, const vector<int>& b1
   vorticityCoefficients(k123, kappa1, kappa2, kappa3);
 
   // resolve the plus minus products
-  const int a3b2k1 = (c100_1 + c110_1 + c101_1) * 
-                     (-c100_2 + c110_2 + c101_2) * 
+  const int a3b2k1 = (c100_1 + c110_1 + c101_1) *
+                     (-c100_2 + c110_2 + c101_2) *
                      (c100_3 + c110_3 - c101_3);
-  const int a3b1k2 = (-c100_1 + c110_1 + c101_1) * 
-                     (c100_2 + c110_2 + c101_2) * 
+  const int a3b1k2 = (-c100_1 + c110_1 + c101_1) *
+                     (c100_2 + c110_2 + c101_2) *
                      (c100_3 + c110_3 - c101_3);
-  const int a2b2k1 = (c100_1 + c110_1 + c101_1) * 
-                     (c100_2 + c110_2 - c101_2) * 
+  const int a2b2k1 = (c100_1 + c110_1 + c101_1) *
+                     (c100_2 + c110_2 - c101_2) *
                      (-c100_3 + c110_3 + c101_3);
   const int a2b3k1 = a2b2k1;
-  const int a1b2k2 = (c100_1 + c110_1 - c101_1) * 
-                     (c100_2 + c110_2 + c101_2) * 
+  const int a1b2k2 = (c100_1 + c110_1 - c101_1) *
+                     (c100_2 + c110_2 + c101_2) *
                      (-c100_3 + c110_3 + c101_3);
   const int a1b3k2 = a1b2k2;
-  const int a2b1k3 = (-c100_1 + c110_1 + c101_1) * 
-                     (c100_2 + c110_2 - c101_2) * 
+  const int a2b1k3 = (-c100_1 + c110_1 + c101_1) *
+                     (c100_2 + c110_2 - c101_2) *
                      (c100_3 + c110_3 + c101_3);
-  const int a1b2k3 = (c100_1 + c110_1 - c101_1) * 
-                     (-c100_2 + c110_2 + c101_2) * 
+  const int a1b2k3 = (c100_1 + c110_1 - c101_1) *
+                     (-c100_2 + c110_2 + c101_2) *
                      (c100_3 + c110_3 + c101_3);
 
   Real final = 0;
@@ -832,7 +832,7 @@ void buildSparseAnalyticC_OMP()
     int threadID = omp_get_thread_num();
 
     vector<int> a123 = ixyz[d1];
-    for (int d2 = 0; d2 < basisRank; d2++) 
+    for (int d2 = 0; d2 < basisRank; d2++)
     {
       vector<int> b123 = ixyz[d2];
 
@@ -843,8 +843,8 @@ void buildSparseAnalyticC_OMP()
       {
         vector<int> k123 = ixyz[d3];
         int k = reverseLookup(k123);
-       
-        Real coef = 0; 
+
+        Real coef = 0;
         bool success = structureCoefficientAnalytic(a123, b123, k123, coef);
 
         if (success)
@@ -865,7 +865,7 @@ void buildSparseAnalyticC_OMP()
             cout << __FILE__ << " " << __FUNCTION__ << " " << __LINE__ << " : " << endl;
           }
           */
-          
+
           tempC[threadID](b,a,k) = -coef;
           nonZeros[threadID]++;
 
@@ -903,7 +903,7 @@ void buildSparseAnalyticC_OMP()
 
   Real percent = (100.0 * totalNonZeros) / (Real) totalEntries;
   cout << " Non-zeros " << totalNonZeros << " out of " << totalEntries << " (" << percent << "%)" << endl;
- 
+
   int totalHits = 0;
   for (int x = 0; x < threads; x++)
     totalHits += hits[x];
@@ -936,7 +936,7 @@ void buildSparseAnalyticC()
   for (int d1 = 0; d1 < basisRank; d1++)
   {
     vector<int> a123 = ixyz[d1];
-    for (int d2 = 0; d2 < basisRank; d2++) 
+    for (int d2 = 0; d2 < basisRank; d2++)
     {
       vector<int> b123 = ixyz[d2];
 
@@ -947,7 +947,7 @@ void buildSparseAnalyticC()
       {
         vector<int> k123 = ixyz[d3];
         int k = reverseLookup(k123);
-        
+
         Real coef = 0;
         bool success = structureCoefficientAnalytic(a123, b123, k123, coef);
 
@@ -970,7 +970,7 @@ void buildSparseAnalyticC()
 
   float percent = (100.0 * nonZeros) / totalEntries;
   cout << " Non-zeros " << nonZeros << " out of " << totalEntries << " (" << percent << "%)" << endl;
-  
+
   // build arrays for fast static multiplies
   //for (int x = 0; x < basisRank; x++)
   //  sparseC[x].buildStatic();
@@ -995,12 +995,12 @@ void drawAxes()
     glColor4f(10.0f, 0.0f, 0.0f, 0.0f);
     glVertex3f(1.0f, 0.0f, 0.0f);
 
-    // y axis is green 
+    // y axis is green
     glColor4f(0.0f, 10.0f, 0.0f, 1.0f);
     glVertex3f(0.0f, 0.0f, 0.0f);
     glColor4f(0.0f, 10.0f, 0.0f, 0.0f);
     glVertex3f(0.0f, 1.0f, 0.0f);
-    
+
     // z axis is blue
     glColor4f(0.0f, 0.0f, 10.0f, 1.0f);
     glVertex3f(0.0f, 0.0f, 0.0f);
@@ -1029,7 +1029,7 @@ VEC3F unproject(float x, float y, float z)
 
   double worldX, worldY, worldZ;
 	gluUnProject(x, viewport[3] - y, z,
-               modelview, projection, viewport, 
+               modelview, projection, viewport,
                &worldX, &worldY, &worldZ);
 
   return VEC3F(worldX, worldY, worldZ);
@@ -1213,7 +1213,7 @@ int glvuWindow()
   glLightModeli(GL_LIGHT_MODEL_LOCAL_VIEWER, 1);
   glLightfv(GL_LIGHT0, GL_POSITION, lightZeroPosition);
   glLightfv(GL_LIGHT0, GL_DIFFUSE, lightZeroColor);
- 
+
   GLfloat lightColor[] = {1.0, 1.0, 1.0, 1.0};
   for (int x = 0; x < 4; x++)
   {
@@ -1226,7 +1226,7 @@ int glvuWindow()
     glLightfv(GL_LIGHT1, GL_DIFFUSE, lightColor);
   }
 
-  glPolygonMode(GL_FRONT_AND_BACK, GL_FILL); 
+  glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
   //glEnable(GL_LIGHTING);
   //glEnable(GL_LIGHT0);
   glEnable(GL_COLOR_MATERIAL);
@@ -1244,7 +1244,7 @@ int glvuWindow()
   glEnable (GL_BLEND);
   glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-  glvuVec3f ModelMin(-10,-10,-10), ModelMax(10,10,10), 
+  glvuVec3f ModelMin(-10,-10,-10), ModelMax(10,10,10),
         //Eye(1.59445, 1.6929, 2.40504), LookAtCntr(1.15667, 1.21574, 1.64302), Up(-0.150235, 0.874454, -0.461259);
         //Eye(1.39197, 1.37948, 2.14899), LookAtCntr(0.947247, 0.903024, 1.39057), Up(-0.150233, 0.874455, -0.461256);
         //Eye(1.00005, 0.994277, 1.81856), LookAtCntr(0.571001, 0.516282, 1.05212), Up(-0.150234, 0.874455, -0.461257);
@@ -1301,7 +1301,7 @@ void computeFieldFFTs()
     FIELD_3D xField = columnField.scalarField(0);
     FIELD_3D yField = columnField.scalarField(1);
     FIELD_3D zField = columnField.scalarField(2);
-    
+
     xField.xDSTyDCTzDCT();
     yField.xDCTyDSTzDCT();
     zField.xDCTyDCTzDST();
@@ -1332,7 +1332,7 @@ void computeFieldFFTs()
       yGuess *= 2;
       zGuess = 0;
     }
-    
+
     // take the product since we want to see later if one was zero
     int kCheck = k1 * k2 * k3;
 
@@ -1341,13 +1341,13 @@ void computeFieldFFTs()
     xMagnitudes[x] = xField[xIndex];
     xProjection[x] = xGuess * projectionFactor;
     xProjection[x] *= (kCheck) ? 1.0 : 0.5;
-    
+
     int yIndex = yField.maxAbsIndex();
     yDeltaIndices[x] = yIndex;
     yMagnitudes[x] = yField[yIndex];
     yProjection[x] = yGuess * projectionFactor;
     yProjection[x] *= (kCheck) ? 1.0 : 0.5;
-    
+
     int zIndex = zField.maxAbsIndex();
     zDeltaIndices[x] = zIndex;
     zMagnitudes[x] = zField[zIndex];
@@ -1440,7 +1440,7 @@ void computeDeltas()
     int xIndex = (k1 - 1) + k2 * res + k3 * slabSize;
     int yIndex = k1 + (k2 - 1) * res + k3 * slabSize;
     int zIndex = k1 + k2 * res + (k3 - 1) * slabSize;
-   
+
     // take the product since we want to see later if one was zero
     int kCheck = k1 * k2 * k3;
 
@@ -1459,9 +1459,9 @@ void computeDeltas()
       yProjection[x] = yGuess * projectionFactor;
       yProjection[x] *= (kCheck) ? 1.0 : 0.5;
     }
-   
+
     if (k3 != 0)
-    { 
+    {
       zDeltaIndices[x] = zIndex;
       zMagnitudes[x] = zGuess;
       zProjection[x] = zGuess * projectionFactor;
@@ -1495,7 +1495,7 @@ void computePlans()
   xHat.resizeAndWipe(res,res,res);
   yHat.resizeAndWipe(res,res,res);
   zHat.resizeAndWipe(res,res,res);
-  
+
   xHat.planISICIC(xPlanIDSTyIDCTzIDCT);
   yHat.planICISIC(yPlanIDCTyIDSTzIDCT);
   zHat.planICICIS(zPlanIDCTyIDCTzIDST);
@@ -1556,7 +1556,7 @@ void advectParticlesRK4()
     VEC3F velocity = velocityField.cubicLookup(position);
     k2[x] = dt * velocity;
   }
-  
+
   vector<VEC3F> k3(totalParticles);
 #pragma omp parallel
 #pragma omp for  schedule(static)
@@ -1587,8 +1587,8 @@ void advectParticlesRK4()
   for (unsigned int x = 0; x < particles.size(); x++)
   {
     // try higher order
-    VEC3F RK4 = particles[x] + 
-                1.0 / 6.0 * (k1[x] + 2.0 * k2[x] + 2.0 * k3[x] + k4[x]); 
+    VEC3F RK4 = particles[x] +
+                1.0 / 6.0 * (k1[x] + 2.0 * k2[x] + 2.0 * k3[x] + k4[x]);
 
     // if it wandered outside, delete it
     //if (!_density.inside(RK4))
@@ -1622,7 +1622,7 @@ void advectParticlesRK2()
     // try something higher order here
     //VEC3F euler = _densityParticles[x] + _dt * velocity;
     VEC3F euler = particles[x] + dt * 0.5 * velocity;
-    
+
     //velocity = velocityField(euler);
     velocity = velocityField.quarticLookup(euler);
 
@@ -1664,7 +1664,7 @@ void addBuoyancy()
 
   for (unsigned int x = 0; x < forceField.totalCells(); x++)
     forceField[x][1] = densityField[x] * 0.1;
-  
+
   FIELD_3D xField = forceField.scalarField(0);
   FIELD_3D yField = forceField.scalarField(1);
   FIELD_3D zField = forceField.scalarField(2);
@@ -1763,16 +1763,16 @@ void runEverytime()
   stepEigenfunctionsEigen();
   //stepEigenfunctions();
   //stepEigenfunctionsExp();
- 
-  //advectParticlesEuler(); 
-  //advectParticlesRK2(); 
+
+  //advectParticlesEuler();
+  //advectParticlesRK2();
   advectParticlesRK4();
 
   splatParticles();
 
   addBuoyancy();
 
-  seedParticles(); 
+  seedParticles();
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -1829,14 +1829,14 @@ void buildEigenFastSparseAnalyticC_OMP()
           for (int y = 0; y < 3; y++)
             for (int z = 0; z < 3; z++)
             {
-              a123[0] = x; 
-              b123[0] = y; 
+              a123[0] = x;
+              b123[0] = y;
               c123[0] = z;
-        
+
               int a = reverseLookup(a123);
               int b = reverseLookup(b123);
               int c = reverseLookup(c123);
-              Real coef = 0; 
+              Real coef = 0;
               bool success = structureCoefficientAnalytic(a123, b123, c123, coef);
               if (fabs(coef) > 1e-8)
                 //tensorC(b,a,c) = -coef;
@@ -1849,7 +1849,7 @@ void buildEigenFastSparseAnalyticC_OMP()
   for (unsigned int x = 0; x < eigenTemp.size(); x++)
     for (int y = 0; y < basisRank; y++)
       eigenTensor[y] += eigenTemp[x][y];
-  
+
   // build arrays for fast static multiplies
   //tensorC.buildStatic();
 }
@@ -1906,14 +1906,14 @@ void buildEigenFastSparseAnalyticC()
           for (int y = 0; y < 3; y++)
             for (int z = 0; z < 3; z++)
             {
-              a123[0] = x; 
-              b123[0] = y; 
+              a123[0] = x;
+              b123[0] = y;
               c123[0] = z;
-        
+
               int a = reverseLookup(a123);
               int b = reverseLookup(b123);
               int c = reverseLookup(c123);
-              Real coef = 0; 
+              Real coef = 0;
               bool success = structureCoefficientAnalytic(a123, b123, c123, coef);
               if (fabs(coef) > 1e-8)
                 //tensorC(b,a,c) = -coef;
@@ -1925,7 +1925,7 @@ void buildEigenFastSparseAnalyticC()
   cout << " done." << endl;
   //for (unsigned int x = 0; x < tempC.size(); x++)
   //  tensorC += tempC[x];
-  
+
   // build arrays for fast static multiplies
   //tensorC.buildStatic();
 }
@@ -1978,14 +1978,14 @@ void buildFastSparseAnalyticC_OMP()
           for (int y = 0; y < 3; y++)
             for (int z = 0; z < 3; z++)
             {
-              a123[0] = x; 
-              b123[0] = y; 
+              a123[0] = x;
+              b123[0] = y;
               c123[0] = z;
-        
+
               int a = reverseLookup(a123);
               int b = reverseLookup(b123);
               int c = reverseLookup(c123);
-              Real coef = 0; 
+              Real coef = 0;
               bool success = structureCoefficientAnalytic(a123, b123, c123, coef);
               if (fabs(coef) > 1e-8)
                 //tensorC(b,a,c) = -coef;
@@ -1997,7 +1997,7 @@ void buildFastSparseAnalyticC_OMP()
   cout << " done." << endl;
   for (unsigned int x = 0; x < tempC.size(); x++)
     tensorC += tempC[x];
-  
+
   // build arrays for fast static multiplies
   tensorC.buildStatic();
 }
@@ -2040,14 +2040,14 @@ void buildFastSparseAnalyticC()
           for (int y = 0; y < 3; y++)
             for (int z = 0; z < 3; z++)
             {
-              a123[0] = x; 
-              b123[0] = y; 
+              a123[0] = x;
+              b123[0] = y;
               c123[0] = z;
-        
+
               int a = reverseLookup(a123);
               int b = reverseLookup(b123);
               int c = reverseLookup(c123);
-              Real coef = 0; 
+              Real coef = 0;
               bool success = structureCoefficientAnalytic(a123, b123, c123, coef);
               if (fabs(coef) > 1e-8)
                 tensorC(b,a,c) = -coef;
@@ -2056,7 +2056,7 @@ void buildFastSparseAnalyticC()
     cout << i << " " << flush;
   }
   cout << " done." << endl;
-  
+
   // build arrays for fast static multiplies
   tensorC.buildStatic();
 }
@@ -2137,7 +2137,7 @@ void testTriples()
           exit(0);
         }
 
-        Real coef = 0; 
+        Real coef = 0;
         bool success = structureCoefficientAnalytic(quads[i], quads[j], quads[k], coef);
         coef *= -1;
         final += coef * coef;
@@ -2172,7 +2172,7 @@ void testTriples()
 
   cout << " Final sum sq: " << final << endl;
   cout << " Ground seen: " << tensorSeen << endl;
-  
+
   TENSOR3 current = tensorC.full();
 
   cout << " Ground truth: " << groundTensor << endl;
@@ -2372,7 +2372,7 @@ int main(int argc, char *argv[])
   VECTOR diff = projected - force;
   cout << " Projection diff: " << diff.norm2() << endl;
   */
-  
+
   // set equal to the force (should scale by dt ...)
   w += force * dt;
 
