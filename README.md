@@ -78,7 +78,7 @@ Before building, ensure that you have the following dependencies installed:
 Once built, run the executable(s) from the project root:
 
 ```bash
-./bin/laplacianEigen2D [cfg/laplacian.3.cfg]
+./bin/laplacianEigen2D cfg/laplacian.3.cfg
 ```
 
 The config file should specify parameters such as resolution, viscosity, timestep, and output paths. There are a handful of config files already present in the cfg/ directory.
