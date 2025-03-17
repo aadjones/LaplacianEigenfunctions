@@ -1,4 +1,7 @@
 # Laplacian Eigenfunctions
+<p >
+  <img src="assets/FFTW_2D.png" width="300" /> <img src="assets/3D.png" width="300" />
+</p>
 
 This project implements Laplacian eigenfunction computations in 2D/3D using C++ and FFTW for spectral operations. It also uses OpenMP for parallelization and depends on additional libraries such as libjpeg and Accelerate (for macOS).
 
